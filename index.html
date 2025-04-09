@@ -1,0 +1,841 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Malom játék</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        body { 
+            text-align: center; 
+            font-family: 'Poppins', sans-serif;
+            color: #333;
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #f5e6c9 0%, #d4a76a 100%);
+            background-attachment: fixed;
+            position: relative;
+        }
+        
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM34 90c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm56-76c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM12 86c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm28-65c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm23-11c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-6 60c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm29 22c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zM32 63c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm57-13c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-9-21c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM60 91c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM35 41c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM12 60c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2z' fill='%23b88c4a' fill-opacity='0.1' fill-rule='evenodd'/%3E%3C/svg%3E");
+            opacity: 0.5;
+            z-index: -1;
+        }
+        
+        .container { 
+            margin-top: 20px; 
+            padding-bottom: 40px;
+            position: relative;
+            z-index: 1;
+        }
+        
+        h1 {
+            color: #5d4037;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+        }
+        
+        .lead {
+            color: #6d4c41;
+            font-weight: 300;
+            margin-bottom: 1.5rem;
+        }
+        
+        canvas { 
+            background: #fff; 
+            border-radius: 10px; 
+            box-shadow: 0 10px 30px rgba(0,0,0,0.15); 
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            border: 8px solid #8d6e63;
+        }
+        
+        canvas:hover {
+            transform: scale(1.01);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.2);
+        }
+        
+        .btn-container { 
+            margin-top: 20px; 
+        }
+        
+        .btn-primary {
+            background-color: #8d6e63;
+            border-color: #8d6e63;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            transition: all 0.3s;
+            font-weight: 500;
+            padding: 0.5rem 1.5rem;
+        }
+        
+        .btn-primary:hover {
+            background-color: #6d4c41;
+            border-color: #6d4c41;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 8px rgba(0,0,0,0.15);
+        }
+        
+        .btn-primary:active {
+            transform: translateY(0);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .instructions { 
+            margin-top: 30px; 
+            text-align: left; 
+            max-width: 600px; 
+            margin-left: auto; 
+            margin-right: auto;
+            background: rgba(255, 255, 255, 0.9);
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+            border-left: 5px solid #8d6e63;
+        }
+        
+        .instructions h3 {
+            color: #5d4037;
+            margin-bottom: 15px;
+            font-weight: 500;
+        }
+        
+        .instructions p {
+            color: #5d4037;
+            margin-bottom: 10px;
+            line-height: 1.6;
+        }
+        
+        .game-info {
+            margin: 20px auto;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 10px;
+            box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+            display: inline-block;
+            min-width: 300px;
+            border-top: 5px solid #8d6e63;
+        }
+        
+        .player-indicator {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            margin-right: 10px;
+            vertical-align: middle;
+            border: 1px solid #333;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+        
+        #currentPlayerText {
+            font-weight: 500;
+            color: #5d4037;
+        }
+        
+        #gamePhase, #blackPieces, #whitePieces {
+            margin-top: 8px;
+            color: #6d4c41;
+        }
+        
+        .game-title-container {
+            background-color: rgba(255, 255, 255, 0.8);
+            padding: 20px 0;
+            margin-bottom: 20px;
+            border-radius: 0 0 10px 10px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+    </style>
+</head>
+<body>
+    <div class="game-title-container">
+        <h1 class="mb-2">Malom játék</h1>
+        <p class="lead">Kattints a táblára, hogy elhelyezd a bábukat és mozgasd őket stratégiailag!</p>
+    </div>
+    
+    <div class="container">
+        <div class="game-info mb-4">
+            <div class="mb-2">
+                <span class="player-indicator" id="currentPlayerIndicator"></span>
+                <span id="currentPlayerText">Fekete játékos következik</span>
+            </div>
+            <div id="gamePhase">Fázis: Bábuk elhelyezése</div>
+            <div id="blackPieces">Fekete bábuk: 9</div>
+            <div id="whitePieces">Fehér bábuk: 9</div>
+        </div>
+        
+        <div class="d-flex justify-content-center">
+            <canvas id="gameCanvas" width="500" height="500"></canvas>
+        </div>
+        
+        <div class="btn-container">
+            <button class="btn btn-primary" onclick="resetGame()">Új játék</button>
+        </div>
+        
+        <div class="instructions">
+            <h3>Hogyan kell játszani?</h3>
+            <p>1. Kattints a táblára a bábuk elhelyezéséhez (a fekete és fehér játékos felváltva lép).</p>
+            <p>2. A cél, hogy „malmot" (három egymás melletti bábut) hozz létre, ami lehetőséget ad egy ellenfél bábu eltávolítására.</p>
+            <p>3. Miután minden bábu elhelyezésre került, a játékosok a vonalak mentén mozgathatják őket új malmok kialakításához.</p>
+            <p>4. A játék addig tart, amíg az egyik játékosnak csak két bábuja marad, vagy nem tud érvényes lépést tenni.</p>
+        </div>
+    </div>
+    
+    <script>
+        const canvas = document.getElementById("gameCanvas");
+        const ctx = canvas.getContext("2d");
+        const currentPlayerIndicator = document.getElementById("currentPlayerIndicator");
+        const currentPlayerText = document.getElementById("currentPlayerText");
+        const gamePhaseElement = document.getElementById("gamePhase");
+        const blackPiecesElement = document.getElementById("blackPieces");
+        const whitePiecesElement = document.getElementById("whitePieces");
+
+       
+        const positions = [
+          
+            [50, 50], [250, 50], [450, 50],
+            [50, 250], [450, 250],
+            [50, 450], [250, 450], [450, 450],
+            
+            
+            [125, 125], [250, 125], [375, 125],
+            [125, 250], [375, 250],
+            [125, 375], [250, 375], [375, 375],
+            
+          
+            [200, 200], [250, 200], [300, 200],
+            [200, 250], [300, 250],
+            [200, 300], [250, 300], [300, 300]
+        ];
+        
+       
+        const connections = [
+            [1, 3], [0, 2, 9], [1, 4], [0, 5, 11], [2, 7, 13], 
+            [3, 6], [5, 7, 14], [4, 6], [9, 20], [1, 8, 10, 11], 
+            [9, 12], [3, 9, 14, 19], [10, 13, 15], [4, 12, 17], [6, 11, 16, 22], 
+            [12, 16], [14, 15, 17, 23], [13, 16], [19, 20], [11, 18, 21], 
+            [8, 18, 22], [19, 23], [14, 20, 23], [16, 21, 22]
+        ];
+        
+
+        const possibleMills = [
+            [0, 1, 2], [3, 4, 5], [6, 7, 8], 
+            [0, 9, 21], [3, 10, 18], [6, 11, 15], 
+            [2, 14, 23], [5, 13, 20], [8, 12, 17], 
+            [9, 10, 11], [12, 13, 14], [15, 16, 17], 
+            [18, 19, 20], [21, 22, 23] 
+        ];
+
+        
+        let pieces = [];
+        let currentPlayer = "black";
+        let gamePhase = "placing";
+        let selectedPiece = null;
+        let remainingPieces = { black: 9, white: 9 };
+        let placedPieces = { black: 0, white: 0 };
+        let message = "";
+        let messageTimer = null;
+        let highlightedPositions = [];
+        let newMill = false;
+        let winner = null;
+        
+
+        let animations = [];
+        let lastFrameTime = 0;
+
+        function drawBoard() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+           
+            const woodPattern = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
+            woodPattern.addColorStop(0, "#e6d2b5");
+            woodPattern.addColorStop(1, "#d4a76a");
+            ctx.fillStyle = woodPattern;
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            
+  
+            ctx.save();
+            ctx.globalAlpha = 0.05;
+            for (let i = 0; i < 20; i++) {
+                ctx.beginPath();
+                ctx.moveTo(Math.random() * canvas.width, 0);
+                ctx.lineTo(Math.random() * canvas.width, canvas.height);
+                ctx.lineWidth = Math.random() * 5 + 1;
+                ctx.strokeStyle = "#5d4037";
+                ctx.stroke();
+            }
+            ctx.restore();
+            
+           
+            ctx.strokeStyle = "#5d4037";
+            ctx.lineWidth = 3;
+            
+          
+            drawSquare(50, 50, 400);
+            
+            
+            drawSquare(125, 125, 250);
+            
+            
+            drawSquare(200, 200, 100);
+            
+            drawLine(250, 50, 250, 200);
+            drawLine(50, 250, 200, 250);
+            drawLine(300, 250, 450, 250);
+            drawLine(250, 300, 250, 450);
+            
+            
+            positions.forEach((pos, index) => {
+                const [x, y] = pos;
+                
+               
+                if (highlightedPositions.includes(index)) {
+                    ctx.fillStyle = "rgba(76, 175, 80, 0.6)";
+                    ctx.beginPath();
+                    ctx.arc(x, y, 22, 0, Math.PI * 2);
+                    ctx.fill();
+                }
+                
+               
+                const gradient = ctx.createRadialGradient(x, y, 0, x, y, 18);
+                gradient.addColorStop(0, "#a1887f");
+                gradient.addColorStop(1, "#8d6e63");
+                
+                ctx.fillStyle = gradient;
+                ctx.beginPath();
+                ctx.arc(x, y, 18, 0, Math.PI * 2);
+                ctx.fill();
+                
+                ctx.fillStyle = "#e6d2b5";
+                ctx.beginPath();
+                ctx.arc(x, y, 15, 0, Math.PI * 2);
+                ctx.fill();
+            });
+            
+            
+            pieces.forEach(piece => {
+                drawPiece(piece);
+                
+              
+                if (selectedPiece && piece.index === selectedPiece.index) {
+                    ctx.strokeStyle = "#4CAF50";
+                    ctx.lineWidth = 3;
+                    ctx.beginPath();
+                    ctx.arc(piece.x, piece.y, 20, 0, Math.PI * 2);
+                    ctx.stroke();
+                }
+                
+                
+                if (newMill && isPartOfNewMill(piece.index)) {
+                    ctx.strokeStyle = "#FFC107";
+                    ctx.lineWidth = 3;
+                    ctx.beginPath();
+                    ctx.arc(piece.x, piece.y, 22, 0, Math.PI * 2);
+                    ctx.stroke();
+                }
+            });
+            
+           
+            if (message) {
+                ctx.fillStyle = "rgba(93, 64, 55, 0.85)";
+                ctx.fillRect(100, 230, 300, 40);
+                ctx.fillStyle = "white";
+                ctx.font = "bold 16px Poppins";
+                ctx.textAlign = "center";
+                ctx.fillText(message, 250, 255);
+            }
+            
+           
+            if (winner) {
+                ctx.fillStyle = "rgba(93, 64, 55, 0.9)";
+                ctx.fillRect(100, 200, 300, 100);
+                ctx.fillStyle = "white";
+                ctx.font = "bold 24px Poppins";
+                ctx.textAlign = "center";
+                ctx.fillText(winner === "black" ? "Fekete játékos nyert!" : "Fehér játékos nyert!", 250, 240);
+                ctx.font = "16px Poppins";
+                ctx.fillText("Kattints az 'Új játék' gombra az újrakezdéshez", 250, 270);
+            }
+        }
+        
+        function drawSquare(x, y, size) {
+            ctx.beginPath();
+            ctx.rect(x, y, size, size);
+            ctx.stroke();
+        }
+        
+        function drawLine(x1, y1, x2, y2) {
+            ctx.beginPath();
+            ctx.moveTo(x1, y1);
+            ctx.lineTo(x2, y2);
+            ctx.stroke();
+        }
+        
+        function drawPiece(piece) {
+            const { x, y, color } = piece;
+            
+            
+            ctx.shadowColor = 'rgba(0, 0, 0, 0.4)';
+            ctx.shadowBlur = 5;
+            ctx.shadowOffsetX = 2;
+            ctx.shadowOffsetY = 2;
+            
+             
+            const gradient = ctx.createRadialGradient(x - 5, y - 5, 0, x, y, 15);
+            
+            if (color === "black") {
+                gradient.addColorStop(0, "#555");
+                gradient.addColorStop(1, "#222");
+            } else {
+                gradient.addColorStop(0, "#fff");
+                gradient.addColorStop(1, "#ddd");
+            }
+            
+         
+            ctx.fillStyle = gradient;
+            ctx.beginPath();
+            ctx.arc(x, y, 15, 0, Math.PI * 2);
+            ctx.fill();
+            
+            
+            ctx.shadowColor = 'transparent';
+            ctx.shadowBlur = 0;
+            ctx.shadowOffsetX = 0;
+            ctx.shadowOffsetY = 0;
+            
+           
+            ctx.strokeStyle = color === "black" ? "#000" : "#999";
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.arc(x, y, 15, 0, Math.PI * 2);
+            ctx.stroke();
+    
+            const highlightGradient = ctx.createRadialGradient(x - 5, y - 5, 0, x, y, 7);
+            
+            if (color === "black") {
+                highlightGradient.addColorStop(0, "rgba(150, 150, 150, 0.7)");
+                highlightGradient.addColorStop(1, "rgba(100, 100, 100, 0)");
+            } else {
+                highlightGradient.addColorStop(0, "rgba(255, 255, 255, 0.9)");
+                highlightGradient.addColorStop(1, "rgba(255, 255, 255, 0)");
+            }
+            
+            ctx.fillStyle = highlightGradient;
+            ctx.beginPath();
+            ctx.arc(x - 5, y - 5, 7, 0, Math.PI * 2);
+            ctx.fill();
+        }
+        
+        function getPositionIndex(x, y) {
+            for (let i = 0; i < positions.length; i++) {
+                const [px, py] = positions[i];
+                const dist = Math.hypot(px - x, py - y);
+                if (dist < 20) {
+                    return i;
+                }
+            }
+            return -1;
+        }
+        
+        function getPieceAtPosition(posIndex) {
+            return pieces.find(p => p.index === posIndex);
+        }
+        
+        function isValidMove(fromIndex, toIndex) {
+            return connections[fromIndex].includes(toIndex);
+        }
+        
+        function checkForMill(pieceIndex, playerColor) {
+            for (const mill of possibleMills) {
+                if (mill.includes(pieceIndex)) {
+                    const millComplete = mill.every(pos => {
+                        const piece = getPieceAtPosition(pos);
+                        return piece && piece.color === playerColor;
+                    });
+                    
+                    if (millComplete) {
+                        return true;
+                    }
+                }
+            }
+            return false;
+        }
+        
+        function isPartOfNewMill(pieceIndex) {
+            for (const mill of possibleMills) {
+                if (mill.includes(pieceIndex)) {
+                    const millComplete = mill.every(pos => {
+                        const piece = getPieceAtPosition(pos);
+                        return piece && piece.color === currentPlayer;
+                    });
+                    
+                    if (millComplete) {
+                        return true;
+                    }
+                }
+            }
+            return false;
+        }
+        
+        function canRemovePiece(pieceIndex) {
+            const piece = getPieceAtPosition(pieceIndex);
+            if (!piece || piece.color === currentPlayer) {
+                return false;
+            }
+            
+           
+            const opponentColor = currentPlayer === "black" ? "white" : "black";
+            const opponentPieces = pieces.filter(p => p.color === opponentColor);
+            const allInMills = opponentPieces.every(p => checkForMill(p.index, opponentColor));
+            
+            
+            if (allInMills) {
+                return true;
+            }
+            
+           
+            return !checkForMill(pieceIndex, opponentColor);
+        }
+        
+        function getValidMoves(pieceIndex) {
+            if (gamePhase === "moving") {
+              
+                return connections[pieceIndex].filter(pos => !getPieceAtPosition(pos));
+            } else if (gamePhase === "flying") {
+               
+                return positions.map((_, i) => i).filter(pos => !getPieceAtPosition(pos));
+            }
+            return [];
+        }
+        
+        function checkWinCondition() {
+            const blackPiecesOnBoard = pieces.filter(p => p.color === "black").length;
+            const whitePiecesOnBoard = pieces.filter(p => p.color === "white").length;
+            
+          
+            if (gamePhase !== "placing") {
+                if (blackPiecesOnBoard < 3) {
+                    winner = "white";
+                    return true;
+                }
+                if (whitePiecesOnBoard < 3) {
+                    winner = "black";
+                    return true;
+                }
+            }
+            
+           
+            if (gamePhase === "moving" || gamePhase === "flying") {
+                const playerPieces = pieces.filter(p => p.color === currentPlayer);
+                const canMove = playerPieces.some(piece => {
+                    return getValidMoves(piece.index).length > 0;
+                });
+                
+                if (!canMove) {
+                    winner = currentPlayer === "black" ? "white" : "black";
+                    return true;
+                }
+            }
+            
+            return false;
+        }
+        
+        function updateGameInfo() {
+            // Update player indicator
+            currentPlayerIndicator.style.backgroundColor = currentPlayer;
+            currentPlayerText.textContent = currentPlayer === "black" ? "Fekete játékos következik" : "Fehér játékos következik";
+            
+          
+            let phaseText = "";
+            switch (gamePhase) {
+                case "placing":
+                    phaseText = "Fázis: Bábuk elhelyezése";
+                    break;
+                case "moving":
+                    phaseText = "Fázis: Bábuk mozgatása";
+                    break;
+                case "removing":
+                    phaseText = "Fázis: Bábu eltávolítása";
+                    break;
+                case "flying":
+                    phaseText = "Fázis: Repülés (szabad mozgás)";
+                    break;
+            }
+            gamePhaseElement.textContent = phaseText;
+            
+           
+            blackPiecesElement.textContent = `Fekete bábuk: ${remainingPieces.black}`;
+            whitePiecesElement.textContent = `Fehér bábuk: ${remainingPieces.white}`;
+        }
+        
+        function showMessage(text, duration = 2000) {
+            message = text;
+            clearTimeout(messageTimer);
+            messageTimer = setTimeout(() => {
+                message = "";
+                drawBoard();
+            }, duration);
+        }
+        
+        function switchPlayer() {
+            currentPlayer = currentPlayer === "black" ? "white" : "black";
+            updateGameInfo();
+        }
+        
+        function addAnimation(type, params) {
+            animations.push({ type, params, progress: 0 });
+        }
+        
+        function animate(timestamp) {
+            if (!lastFrameTime) lastFrameTime = timestamp;
+            const deltaTime = timestamp - lastFrameTime;
+            lastFrameTime = timestamp;
+            
+           
+            animations.forEach(anim => {
+                anim.progress += deltaTime / 300; 
+                if (anim.progress > 1) anim.progress = 1;
+            });
+              
+            animations = animations.filter(anim => anim.progress < 1);
+            
+           
+            drawBoard();
+            
+            
+            if (animations.length > 0) {
+                requestAnimationFrame(animate);
+            }
+        }
+        
+        canvas.addEventListener("click", (event) => {
+            if (winner) return;
+            
+            const rect = canvas.getBoundingClientRect();
+            const x = event.clientX - rect.left;
+            const y = event.clientY - rect.top;
+            
+            const posIndex = getPositionIndex(x, y);
+            if (posIndex === -1) return;
+            
+            handleBoardClick(posIndex);
+        });
+        
+        function handleBoardClick(posIndex) {
+            const clickedPiece = getPieceAtPosition(posIndex);
+            
+            if (gamePhase === "placing") {
+                handlePlacingPhase(posIndex, clickedPiece);
+            } else if (gamePhase === "removing") {
+                handleRemovingPhase(posIndex, clickedPiece);
+            } else if (gamePhase === "moving" || gamePhase === "flying") {
+                handleMovingPhase(posIndex, clickedPiece);
+            }
+            
+           
+            if (checkWinCondition()) {
+                drawBoard();
+                return;
+            }
+            
+           
+            updateGameInfo();
+            drawBoard();
+          
+            if (animations.length > 0 && !lastFrameTime) {
+                requestAnimationFrame(animate);
+            }
+        }
+        
+        function handlePlacingPhase(posIndex, clickedPiece) {
+            if (clickedPiece) {
+                showMessage("Ez a pozíció már foglalt!");
+                return;
+            }
+            
+           
+            const [x, y] = positions[posIndex];
+            const newPiece = { x, y, color: currentPlayer, index: posIndex };
+            pieces.push(newPiece);
+            
+            
+            remainingPieces[currentPlayer]--;
+            placedPieces[currentPlayer]++;
+            
+        
+            if (checkForMill(posIndex, currentPlayer)) {
+                gamePhase = "removing";
+                newMill = true;
+                showMessage("Malom! Távolíts el egy ellenfél bábut.", 3000);
+                return;
+            }
+            
+           
+            if (remainingPieces.black === 0 && remainingPieces.white === 0) {
+                gamePhase = "moving";
+                showMessage("Minden bábu elhelyezve. Most mozgathatod őket.", 3000);
+            }
+            
+          
+            switchPlayer();
+        }
+        
+        function handleRemovingPhase(posIndex, clickedPiece) {
+            if (!clickedPiece) {
+                showMessage("Válassz egy ellenfél bábut!");
+                return;
+            }
+            
+            if (!canRemovePiece(posIndex)) {
+                showMessage("Ezt a bábut nem távolíthatod el!");
+                return;
+            }
+            
+            
+            pieces = pieces.filter(p => p.index !== posIndex);
+            
+           
+            newMill = false;
+            
+          
+            const opponentColor = currentPlayer === "black" ? "white" : "black";
+            const opponentPiecesCount = pieces.filter(p => p.color === opponentColor).length;
+            
+            if (opponentPiecesCount === 3 && placedPieces[opponentColor] >= 9) {
+                showMessage(`${opponentColor === "black" ? "Fekete" : "Fehér"} játékos repülhet!`, 3000);
+            }
+            
+       
+            gamePhase = remainingPieces.black === 0 && remainingPieces.white === 0 ? "moving" : "placing";
+     
+            switchPlayer();
+            
+            const blackPiecesOnBoard = pieces.filter(p => p.color === "black").length;
+            const whitePiecesOnBoard = pieces.filter(p => p.color === "white").length;
+            
+            if (placedPieces.black >= 9 && blackPiecesOnBoard === 3) {
+                showMessage("Fekete játékos repülhet!", 3000);
+            }
+            
+            if (placedPieces.white >= 9 && whitePiecesOnBoard === 3) {
+                showMessage("Fehér játékos repülhet!", 3000);
+            }
+        }
+        
+        function handleMovingPhase(posIndex, clickedPiece) {
+          
+            const playerPiecesCount = pieces.filter(p => p.color === currentPlayer).length;
+            const canFly = playerPiecesCount === 3 && placedPieces[currentPlayer] >= 9;
+            
+            if (canFly) {
+                gamePhase = "flying";
+            } else {
+                gamePhase = "moving";
+            }
+            
+          
+            if (!selectedPiece) {
+                if (!clickedPiece) {
+                    showMessage("Válassz egy saját bábut!");
+                    return;
+                }
+                
+                if (clickedPiece.color !== currentPlayer) {
+                    showMessage("Csak a saját bábudat mozgathatod!");
+                    return;
+                }
+                
+                
+                selectedPiece = clickedPiece;
+                
+               
+                highlightedPositions = getValidMoves(posIndex);
+                
+                if (highlightedPositions.length === 0) {
+                    showMessage("Ennek a bábunak nincs érvényes lépése!");
+                    selectedPiece = null;
+                    return;
+                }
+                
+                return;
+            }
+            
+           
+            if (clickedPiece && clickedPiece.color === currentPlayer) {
+                
+                selectedPiece = clickedPiece;
+                highlightedPositions = getValidMoves(posIndex);
+                
+                if (highlightedPositions.length === 0) {
+                    showMessage("Ennek a bábunak nincs érvényes lépése!");
+                    selectedPiece = null;
+                    highlightedPositions = [];
+                }
+                
+                return;
+            }
+            
+            
+            if (!highlightedPositions.includes(posIndex)) {
+                showMessage("Érvénytelen lépés!");
+                return;
+            }
+            
+            
+            const oldIndex = selectedPiece.index;
+            selectedPiece.index = posIndex;
+            selectedPiece.x = positions[posIndex][0];
+            selectedPiece.y = positions[posIndex][1];
+            
+           
+            selectedPiece = null;
+            highlightedPositions = [];
+            
+            
+            if (checkForMill(posIndex, currentPlayer)) {
+                gamePhase = "removing";
+                newMill = true;
+                showMessage("Malom! Távolíts el egy ellenfél bábut.", 3000);
+                return;
+            }
+            
+            
+            switchPlayer();
+        }
+        
+        function resetGame() {
+            pieces = [];
+            currentPlayer = "black";
+            gamePhase = "placing";
+            selectedPiece = null;
+            remainingPieces = { black: 9, white: 9 };
+            placedPieces = { black: 0, white: 0 };
+            message = "";
+            highlightedPositions = [];
+            newMill = false;
+            winner = null;
+            animations = [];
+            lastFrameTime = 0;
+            
+            clearTimeout(messageTimer);
+            updateGameInfo();
+            drawBoard();
+        }
+        
+    
+        updateGameInfo();
+        drawBoard();
+    </script>
+</body>
+</html>
